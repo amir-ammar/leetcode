@@ -1,27 +1,19 @@
 class Solution {
     public boolean canPartition(int[] nums) {
-        int sum=0;
-        for (int num : nums){
-            sum+=num;
+        boolean [][] dp = new boolean[201][20001];
+        int n = nums.length;
+        int sum = 0;
+        for (int i = 0; i < n; i++) {sum += nums[i];}
+        if(sum % 2==1)return false;
+        for (int i = 0; i <= n; i++) {
+            dp[i][0] = true;
         }
-        if(sum%2!=0){
-            return false;
-        }
-        boolean[][] dp = new boolean[nums.length + 1][sum/2 +1];
-        
-        for(int i=0; i<dp.length; i++){
-            dp[i][0]=true;
-        }
-        
-        for(int i=1; i<dp.length; i++){ //nums
-            for(int j=1; j<dp[0].length; j++){
-                if(nums[i-1]<=j){
-                    dp[i][j] = dp[i-1][j] || dp[i-1][j-nums[i-1]];
-                }else{
-                    dp[i][j]=dp[i-1][j];
-                }
+        for (int i = 1; i <= n; i++) { // number of element taken into consideration till now
+            for (int j = 0; j <= sum/2; j++) { // target sums
+                if(nums[i-1] <= j)dp[i][j] = dp[i-1][j] || dp[i-1][j-nums[i-1]];
+                else dp[i][j] = dp[i-1][j];
             }
         }
-        return dp[nums.length][sum/2];
+        return dp[n][sum/2];
     }
 }
