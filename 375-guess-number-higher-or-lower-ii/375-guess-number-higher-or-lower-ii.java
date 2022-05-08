@@ -1,24 +1,21 @@
 class Solution {
-    static int memo[][];
+    static int [][] memo;
     static int n;
-
-    public int getMoneyAmount(int m) {
-        n = m;
+    public static int getMoneyAmount(int n) {
         memo = new int[n+1][n+1];
         for (int [] x:memo) {
             Arrays.fill(x, -1);
         }
         return dp(1, n);
     }
-    
-    public static int dp(int s, int e){
-        if(s >= e)return 0;
-        if(memo[s][e] != -1)return memo[s][e];
-        int ans = Integer.MAX_VALUE;
-        for (int i = s ; i<= e ; i++){
-            ans = Math.min(ans, i + Math.max(dp(s, i-1), dp(i+1, e)));
-        }
-        return memo[s][e] = ans;
-    }
 
+    public static int dp(int lo, int hi){
+        if(hi <= lo) return 0;
+        if(memo[lo][hi]!=-1)return memo[lo][hi];
+        int ans = Integer.MAX_VALUE;
+        for (int i = lo; i <= hi; i++) {
+            ans = Math.min(i + Math.max(dp(lo, i-1), dp(i+1, hi)), ans);
+        }
+        return memo[lo][hi] = ans;
+    }
 }
