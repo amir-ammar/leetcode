@@ -1,48 +1,70 @@
-class Solution {
-    class Pair{
+public class Solution {
+
+    static final int INF = (int)1e9;	
+    static ArrayList<Edge>[] adjList;
+    static int V;
+    static long [] ways;
+    static int MOD = (int)(1e9 + 7);
+
+
+    static class Edge implements Comparable<Edge> {
         int node;
-        int dist;
-        Pair(int node , int dist){
-            this.node = node;
-            this.dist = dist;
-        }
+        int cost;
+
+        Edge(int a, int b) { node = a;	cost = b; }
+
+        public int compareTo(Edge e){ return (int) (cost - e.cost);	}
+
+        public String toString() { return node + " " + cost; }
+
     }
-    public int countPaths(int n, int[][] roads) {
-        int mod = (int)Math.pow(10 , 9) + 7;
-        ArrayList<ArrayList<Pair>> adj = new ArrayList<>();
-        int rows = roads.length;
-        for(int i = 0 ; i < n ; i++)
-            adj.add(new ArrayList<Pair>());
-        for(int i = 0 ; i < rows ; i++){
-            int from = roads[i][0];
-            int to = roads[i][1];
-            int dis = roads[i][2];
-            adj.get(from).add(new Pair(to , dis));
-            adj.get(to).add(new Pair(from , dis));
-        }
-        PriorityQueue<Pair> pq = new PriorityQueue<>((aa , bb) -> aa.dist - bb.dist);
-        pq.add(new Pair(0 , 0));
-        long[] ways = new long[n];
+
+    public static int countPaths(int n, int[][] roads) {
+
+        V = n;
+        adjList = new ArrayList[V];
+        for (int i = 0; i < V; i++)
+            adjList[i] = new ArrayList<>();
+
+        ways = new long[V];
         ways[0] = 1;
-        int[] dist = new int[n];
-        Arrays.fill(dist , Integer.MAX_VALUE);
-        dist[0] = 0;
-        while(!pq.isEmpty()){
-            Pair p = pq.remove();
-            int node = p.node;
-            int dis = p.dist;
-            for(Pair pa : adj.get(node)){
-                if((dis + pa.dist) < dist[pa.node]){
-                    ways[pa.node] = ways[node];
-                    dist[pa.node] = dis + pa.dist;
-                    pq.add(new Pair(pa.node , dist[pa.node]));
-                }
-                else if((dis + pa.dist) == dist[pa.node]){
-                    ways[pa.node] += ways[node];
-                    ways[pa.node] = ways[pa.node] % mod;
+        for (int[] road : roads) {
+            int u = road[0];
+            int v = road[1];
+            int w = road[2];
+            adjList[u].add(new Edge(v, w));
+            adjList[v].add(new Edge(u, w));
+        }
+
+        dijkstra(0, n-1);
+        return (int)ways[n-1];
+
+    }
+
+    public static int dijkstra(int S, int T)
+    {
+        int[] dist = new int[V];
+        Arrays.fill(dist, INF);
+        PriorityQueue<Edge> pq = new PriorityQueue<>();
+        dist[S] = 0;
+        pq.add(new Edge(S, 0));
+        while(!pq.isEmpty())
+        {
+            Edge cur = pq.remove();
+            if(cur.node == T)
+                return dist[T];
+            if(cur.cost > dist[cur.node])
+                continue;
+            for(Edge nxt: adjList[cur.node]) {
+                if (cur.cost + nxt.cost < dist[nxt.node]) {
+                    pq.add(new Edge(nxt.node, dist[nxt.node] = (int) (cur.cost + nxt.cost)));
+                    ways[nxt.node] = ways[cur.node];
+                } else if(dist[nxt.node] == cur.cost + nxt.cost) {
+                    ways[nxt.node] = (ways[cur.node] + ways[nxt.node]) % MOD;
                 }
             }
         }
-        return (int)ways[n - 1];
+        return -1;
     }
+
 }
