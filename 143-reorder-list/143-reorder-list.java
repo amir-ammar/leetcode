@@ -9,15 +9,6 @@
  * }
  */
 class Solution {
-    
-    public static int count(ListNode head) {
-        int cnt = 0;
-        while (head != null) {
-            cnt++;
-            head = head.next;
-        }
-        return cnt;
-    }
 
      public void reorderList(ListNode head) {
         ListNode slow = head;
