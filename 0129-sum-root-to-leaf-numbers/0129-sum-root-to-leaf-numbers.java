@@ -16,15 +16,16 @@
 class Solution {
     public static int sumNumbers(TreeNode root) {
         total = 0;
-        helper(root, 0);
+        helper(root, new StringBuilder());
         return total;
     }
     static int total;
-    public static void helper(TreeNode root, int sum) {
+    public static void helper(TreeNode root, StringBuilder sum) {
         if (root == null) return;
-        sum = sum * 10 + root.val;
-        if (root.left == null && root.right == null) {total += sum;return;}
+        sum.append(root.val);
         helper(root.left, sum);
         helper(root.right, sum);
+        if (root.left == null && root.right == null) total += Integer.parseInt(sum.toString());
+        sum.deleteCharAt(sum.length() - 1);
     }
 }
